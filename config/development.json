@@ -1,0 +1,6 @@
+{
+    "name": "My vidly API using Expressjs - development",
+    "mail": {
+        "host": "dev-mail-server"
+    }
+}
