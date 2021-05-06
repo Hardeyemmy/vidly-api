@@ -13,7 +13,8 @@ const mongoose = require("mongoose");
 const Joi = require("Joi");
 const customer = require("./routes/customers");
 const movie = require('./routes/movie');
-const rental = require('./routes/rental')
+const rental = require('./routes/rental');
+const users = require("./routes/users")
 
 mongoose.connect("mongodb://localhost/vidly-api", {
     useNewUrlParser: true,
@@ -57,6 +58,7 @@ app.use('/api/vidly/customers', customer);
 app.use('/api/vidly/movies', movie);
 app.use('/api/vidly/rentals', rental)
 app.use('/', home);
+app.use("/api/users", users);
 
 
 //third party middleware
