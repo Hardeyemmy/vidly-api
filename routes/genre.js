@@ -1,22 +1,25 @@
-const { validate, genre } = require("../model/genre");
+const { validate, Genre } = require("../model/genre");
 const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose");
 const Joi = require("Joi");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
 
-router.get("/", async (req, res) => {
+
+router.get("/", async(req, res) => {
     const genre = await Genre.find().sort('name')
     res.send(genre);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", async(req, res) => {
     const genre = await Genre.findById(req.params.id);
     if(!genre) return res.status(404).send("You have inputted invalid genre id");
     res.send(genre);
 });
 
-router.post("/", async(req, res) => {
+router.post("/", auth, async(req, res) => {
          const {error} = validate(req.body);
          if(error) return res.status(400).send(error.details[0].message);
     
@@ -25,7 +28,7 @@ router.post("/", async(req, res) => {
     res.send(genre);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message); 
 const genre = await Genre.findByIdAndUpdate(req.params.id, {name: req.body.name}, {
@@ -36,8 +39,8 @@ const genre = await Genre.findByIdAndUpdate(req.params.id, {name: req.body.name}
         res.send(genre);
 });
 
-router.delete("/:id", async (req, res) => {
-    const genre = Genre.findByIdAndRemove((req.params.id));
+router.delete("/:id", [auth, admin], async (req, res) => {
+    const genre = await Genre.findByIdAndRemove((req.params.id));
     if(!genre) return res.status(404).send("You have inputted invalid genre id");
 
     res.send(genre);

@@ -14,7 +14,8 @@ const Joi = require("Joi");
 const customer = require("./routes/customers");
 const movie = require('./routes/movie');
 const rental = require('./routes/rental');
-const users = require("./routes/users")
+const users = require("./routes/users");
+const auth = require("./routes/auth");
 
 mongoose.connect("mongodb://localhost/vidly-api", {
     useNewUrlParser: true,
@@ -41,9 +42,10 @@ if(app.get('env') === "development"){
  dbDebugger("connected to the database...");
 
 
-console.log(`Appication Name: ${config.get("name")}`);
-console.log(`Mail server: ${config.get("mail.host")}`);
-// console.log(`Mail password: ${config.get("mail.password")}`);
+if (!config.get('jwtPrivateKey')){
+    console.error("FATAL ERROR: jwtPrivateKey is not defined.");
+    process.exit(1)
+}
 
 //custom middleware
 app.use(logger);
@@ -59,7 +61,7 @@ app.use('/api/vidly/movies', movie);
 app.use('/api/vidly/rentals', rental)
 app.use('/', home);
 app.use("/api/users", users);
-
+app.use("/api/auth", auth);
 
 //third party middleware
 app.use(morgan("tiny"));
