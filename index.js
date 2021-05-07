@@ -16,6 +16,7 @@ const movie = require('./routes/movie');
 const rental = require('./routes/rental');
 const users = require("./routes/users");
 const auth = require("./routes/auth");
+const error = require("./middleware/error");
 
 mongoose.connect("mongodb://localhost/vidly-api", {
     useNewUrlParser: true,
@@ -62,6 +63,8 @@ app.use('/api/vidly/rentals', rental)
 app.use('/', home);
 app.use("/api/users", users);
 app.use("/api/auth", auth);
+
+app.use(error);
 
 //third party middleware
 app.use(morgan("tiny"));
