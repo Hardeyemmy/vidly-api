@@ -8,23 +8,20 @@ const admin = require("../middleware/admin");
 
 
 
-router.get("/", async(req, res) => {
+
+router.get("/", async(req, res, next) => {
+    throw new Error("could not get the genres.")
+
     const genre = await Genre.find().sort('name')
     res.send(genre);
 });
 
-router.get("/:id", async(req, res, next) => {
-    try{
-        const genre = await Genre.findById(req.params.id);
+router.get("/:id", (async(req, res, next) => {
+    const genre = await Genre.findById(req.params.id);
         if(!genre) return res.status(404).send("You have inputted invalid genre id");
         res.send(genre);
-    }
 
-    catch(ex){
-      next(ex); 
-    }
-    
-});
+}));
 
 router.post("/", auth, async(req, res) => {
          const {error} = validate(req.body);

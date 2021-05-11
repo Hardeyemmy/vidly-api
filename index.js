@@ -1,3 +1,4 @@
+const winston = require("winston");
 const dbDebugger = require('debug')('app:db');
 const startupDebugger = require('debug')('app:startup');
 const config = require("config");
@@ -17,6 +18,7 @@ const rental = require('./routes/rental');
 const users = require("./routes/users");
 const auth = require("./routes/auth");
 const error = require("./middleware/error");
+require("express-async-errors");
 
 mongoose.connect("mongodb://localhost/vidly-api", {
     useNewUrlParser: true,
@@ -26,6 +28,8 @@ mongoose.connect("mongodb://localhost/vidly-api", {
 })
 .then(() => console.log("Connected to the mongoDB..."))
 .catch(() => console.log("Could not connect to mongoDB..."))
+
+winston.add(winston.transports.File, {filename: "logFile.log"});
 
 app.set('view engine', 'pug');
 app.set('views', './views'); //default
@@ -64,12 +68,12 @@ app.use('/', home);
 app.use("/api/users", users);
 app.use("/api/auth", auth);
 
-app.use(error);
 
 //third party middleware
 app.use(morgan("tiny"));
 app.use(helmet());
 
+app.use(error);
 
   
 
